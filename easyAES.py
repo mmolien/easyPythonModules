@@ -1,14 +1,16 @@
 #!/usr/bin/python
 
 '''
+@summary: AES encryption lib.
 @author: michael.molien
 @version: 1.0.0
-@since: 07.30.2012
+@since: 2012.08.28
 '''
+__author__      = "michael.molien"
+__version__     = "1.1.0"
+__copyright__   = "2012-08-28"
+__license__     = "New-style BSD"
 
-__author__ = "michael.molien"
-__version__ = "1.0.0"
-__license__ = "New-style BSD"
 
 from Crypto.Cipher import AES
 import base64
@@ -127,3 +129,9 @@ class easyAES:
                 hv = '0' + hv
             lst.append( 'x' + hv )
         return lst
+
+def main():
+    print("This class should not be executed directly.")
+
+if __name__ == "__main__":
+    main()

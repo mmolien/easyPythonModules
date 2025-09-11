@@ -4,13 +4,15 @@
 @summary: Creates HTTP(S) connection and does HTTP(S) transactions.
 Allows multipart form posts.
 
+@organization: 
 @author: michael.molien
-@version: 1.2.0
+@version: 1.1.0
 @since: 07.30.2012
 '''
 
 __author__ = "michael.molien"
 __version__ = "1.2.0"
+__copyright__ = "07.30.2012"
 __license__ = "New-style BSD"
 
 import os
@@ -120,7 +122,7 @@ class easyHTTP:
                 if 'TimeOut' == kw:
                     self._TimeOut = kwargs['TimeOut']
             else:
-                print( "Unknown KeyWord: [%s] = %s" % (kw, kwargs[kw]) )
+                print "Unknown KeyWord: [%s] = %s" % (kw, kwargs[kw])
 
 
 
@@ -202,8 +204,9 @@ class easyHTTP:
             try:
                 urllib.quote(tmp_val)
                 self._Parameters[ tmp_key ] = tmp_val
-            except( Exception, e ):
-                assert( "Error Encoding String: ['%s'] - %s" % (tmp_val, e) )
+            except Exception, e:
+#                print "Error Encoding String: ['%s'] - %s" % ( tmp_val, e )
+                assert "Error Encoding String: ['%s'] - %s" % (tmp_val, e)
 
         return 1
 
@@ -299,22 +302,22 @@ class easyHTTP:
         try:
             conn.request(self._Method, self._UrlString, self._POSTPARAMS, self._Headers)
 #            print 'URL:%s %s://%s:%s%s' % ( self._Method, self._Protocol, self._ServerName, self._PortNumber, self._UrlString )
-        except( Exception, e ):
-            print( "httpStuff EXCEPTION: %s" % (str(e)) )
-            print( '++RESPONSE++' )
-            print( 'URL:%s %s://%s:%s%s' % (self._Method, self._Protocol, self._ServerName, self._PortNumber, self._UrlString) )
+        except Exception, e :
+            print "httpStuff EXCEPTION: %s" % (str(e))
+            print '++RESPONSE++'
+            print 'URL:%s %s://%s:%s%s' % (self._Method, self._Protocol, self._ServerName, self._PortNumber, self._UrlString)
 
         try:
             httpResp = conn.getresponse()
             if httpResp.status == 401:
                 if 'Authorization' in self._Headers:
                     m1 = self._Headers['Authorization'].split(' ')
-                    print( "regex pass: %s" % (m1[1]) )
+                    print "regex pass: %s" % (m1[1])
                     try:
                         tmp_str = base64.urlsafe_b64decode(str(m1[1]))
-                        print( tmp_str )
-                    except( Exception, e ):
-                        print( e )
+                        print tmp_str
+                    except Exception, e:
+                        print e
             if httpResp.status == 301 or httpResp.status == 302 :
                 tmpDict = dict(httpResp.getheaders())
                 try:
@@ -323,7 +326,7 @@ class easyHTTP:
                     self.setProtocol(m.group('proto'))
                     self.setServerName(m.group('serverName'))
                     self.setPortNumber(m.group('portNumber'))
-                except( Exception, e ):
+                except Exception, e:
                     m = re.match(r"^(?P<path>[^?]*)(?P<parameters>\?.*)?", tmpDict['location'])
 #                print "%s:%s%s" % ( m.group('serverName'), m.group('portNumber'), m.group('path') )
 
@@ -349,17 +352,23 @@ class easyHTTP:
             ret['md5sum'] = hashlib.md5(tmp_body).hexdigest()
             try:
                 ret['body'] = json.loads(tmp_body)
-            except( Exception, e ):
+            except Exception, e:
                 ret['body'] = tmp_body
 
-        except( Exception, e ):
-            print( "httpStuff EXCEPTION: %s" % (str(e)) )
-            print( '++RESPONSE++' )
-            print( 'URL:%s %s://%s:%s%s' % (self._Method, self._Protocol, self._ServerName, self._PortNumber, self._UrlString) )
-            if( httpResp is not None ):
-                print( '%s %s %s %s' % (httpResp.version, self._Method, httpResp.status, httpResp.reason) )
-                print( httpResp.msg )
-                print( httpResp.read() )
-            print( '++++' )
+        except Exception, e:
+            print "httpStuff EXCEPTION: %s" % (str(e))
+            print '++RESPONSE++'
+            print 'URL:%s %s://%s:%s%s' % (self._Method, self._Protocol, self._ServerName, self._PortNumber, self._UrlString)
+            if httpResp is not None:
+                print '%s %s %s %s' % (httpResp.version, self._Method, httpResp.status, httpResp.reason)
+                print httpResp.msg
+                print httpResp.read()
+            print '++++'
         conn.close()
         return ret
+
+def main():
+    print("This class should not be executed directly.")
+
+if __name__ == "__main__":
+    main()
